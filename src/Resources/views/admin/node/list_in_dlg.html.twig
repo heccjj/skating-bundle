@@ -1,0 +1,146 @@
+{% extends '@HeccjjSkating/layout_admin.html.twig' %}
+
+{% block title %}Node Browse{% endblock %}
+
+{% block asidebar %}{% endblock %}
+
+{% block body %}
+<div class="card-heade">
+
+{% block breadcrumb %}
+  {% set crumbs = query.breadcrumb( dir) %}
+  <div id="breadcrumb">
+	<div id="breadcrumb_guide">您的位置({{ dir|raw }})：
+		  {% for crumb in crumbs %}
+		    {% if(crumb.path) %}
+			   <a href="{{ path('heccjjskating_listindlg_node', {'dir': crumb.path}) }}"> {{crumb.title}} </a> /
+			 {% else %}
+			    {{crumb.title}}/
+			  {% endif %}
+		  {% endfor %}
+	</div>
+  </div>
+{% endblock %}
+
+</div>
+
+<div class="card-body">
+  <table id="nodelist" class="table table-bordered table-striped">
+      <thead>
+      <tr>
+          <td>&nbsp;</td>
+          <td>Slug</td>
+          <td>Title</td>
+          <td>Status</td>
+      </tr>
+      </thead>
+      <tbody>
+    {% for node in nodes %}
+          {% if(node.dir == '/') %}
+            {% set path = node.dir ~ node.slug %}
+          {% else %}
+            {% set path = node.dir ~ '/' ~ node.slug %}
+          {% endif %}
+          {% if node.getType|lower in ['nodefile', 'nodeimage'] %}
+            {% set node_detail = query.getNodeDetail(node.id) %} 
+          {% endif %}
+          <tr>
+              <td>&nbsp;{% if node.getType|lower == 'nodefolder' %}<a href="{{ path('heccjjskating_listindlg_node', {'dir' : path}) }}?{{ querystring }}"><i class="far fa-folder nav-icon"></a>{% endif %}
+{% if( (node_detail.fileMime is defined) and (node_detail.fileMime starts with 'image') and (node.status == 'published') ) %}
+  {% if(node_detail.fileSubPath) %}
+      {% set subpath = node_detail.fileSubPath ~ '/' %}
+  {% else %}
+      {% set subpath = '' %}
+  {% endif %}
+    <!--如果有缩略图，则返回较小图-->
+    <!--TODO：为了避免在插入图片时用绝对路径，可以让预览图与插入路径不同-->
+  <a href="javascript:void(null)" ondblclick="precessReturn('{{query.getFilethumb(subpath ~ node_detail.fileName)}}');" onmouseover="imgshow('{{ "/uploadfiles/" ~ subpath ~ node_detail.fileName }}')" onmouseout="imghide()" title="{{ subpath ~ node_detail.fileName }}">选中该图</a>			  
+{% endif %}
+{% if( (node_detail.fileMime is defined) and (not (node_detail.fileMime starts with 'image')) and (node.status == 'published') ) %}
+    {% if(node_detail.fileSubPath) %}
+        {% set subpath=node_detail.fileSubPath ~ '/' %}
+    {% else %}
+        {% set subpath='' %}
+    {% endif %}
+  <a href="javascript:void(null)" ondblclick="precessReturn('{{query.getFilethumb(subpath ~ node_detail.fileName)}}');" title="{{ subpath ~ node_detail.fileName }}">选中该文件</a>
+{% endif %}</td>
+              <td><a href="#" title="{{node.getType}}">{{node.slug}}</a></td>
+              <td><a href="#" target="_blank">{{node.title}}</a></td>
+              <td><a class="btn{% if(node.status == 'published') %} btn-success {% else %} btn-primary{% endif %}">{{node.status}}</a></td>
+          </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+  $(document).ready(function(){
+    $('#nodelist').DataTable({
+      //"order": []
+      "autoWidth": false,
+      "responsive": true,
+    });
+
+    $('.toast').toast('show');
+
+  });
+
+  /**
+    * 设置CKEditor中的结果
+    */
+  function setCKEditorUrl(CKEditorFuncNum, fileUrl )
+  {
+      window.top.opener.CKEDITOR.tools.callFunction(CKEditorFuncNum, fileUrl); //CKEditorFuncNum和fileUrl想法从后台绑定
+  }
+
+  /**
+    * 设置URL类型的结果
+    */
+  function setUrl(inputid, fileUrl) {
+      window.opener.document.getElementById(inputid).value = fileUrl;
+  }
+
+  /**
+    * 处理返回结果
+    */
+  function precessReturn(path) {
+      var location = window.location.search;
+      var theRequest = new Object();
+      if (location.indexOf("?") != -1) {
+          var str = location.substr(1);
+          strs = str.split("&");
+          for(var i = 0; i < strs.length; i ++) {
+              theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+          }
+      }
+
+      if(theRequest['urlinputid'])
+          setUrl(theRequest['urlinputid'], path);  //url形式的文件只显示相对于uploadpath的路径。
+      else
+          setCKEditorUrl(theRequest['CKEditorFuncNum'], '/uploadfiles/' + path); //文档中的图片应该显示绝对地址，否则无法正确预览。
+
+      window.top.close();
+  }
+
+  function imgshow(url) {
+      $( "#dialog" ).dialog(
+              {
+                  width: 400,
+                  height: 300,
+                  closed: false,
+              }
+      );
+      $("#dialog img").attr('src', url);
+      //$("#dialog").show();
+  }
+  function imghide(){
+      //$("#dialog").hide();
+      $("#dialog").dialog({
+          closed: true,
+      });
+  }
+
+</script>
+{% endblock %}

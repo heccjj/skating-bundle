@@ -1,0 +1,27 @@
+{
+    "name": "heccjj/skating-bundle",
+    "type": "symfony-bundle",
+    "authors": [
+        {
+            "name": "Minggui He"
+        }
+    ],
+    "version": "1.0.0",
+    "require": {
+        "php": "^7.2.5",
+        "beelab/tag-bundle": "^1.5",    
+        "friendsofsymfony/ckeditor-bundle": "^2.2",
+        "hightman/xunsearch": "*@beta"
+    },
+    "require-dev": {
+        "psr/log": "~1.0"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Heccjj\\SkatingBundle\\": "src/"
+        }
+    }
+}

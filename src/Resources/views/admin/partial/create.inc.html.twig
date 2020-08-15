@@ -1,0 +1,10 @@
+	<div id="form-group" style="float: right;">
+		<form id="form_addnode" action="{{ path('heccjjskating_create_node') }}" method="post" class="form-inline">
+			 <select name="nodetype" id="nodetype" class="form-control">
+				{% for key,value in nodetypes %}
+				<option value="{{key}}">{{value}}</option>
+				{% endfor %}
+			</select>
+			&nbsp;<input type="submit" value="添加" class="btn btn-primary" />
+		</form>
+	</div>

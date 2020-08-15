@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>{% block title %}欢迎使用Skating！{% endblock %}</title>
+        <link rel="stylesheet" type="text/css" href="{{asset('bundles/skating/css/skating.css')}}" media="all" />
+
+		<script type="text/javascript" src="{{asset('bundles/skating/js/jquery.js')}}"></script>
+        {% block js %}{% endblock %}
+    </head>
+    <body>
+
+    <!--2_header_start-->
+	{% include '@HeccjjSkating/front/partial/header.inc.html.twig' %}
+	<!--2_header_end-->
+
+{% block body %}
+    <div class="content">
+        {% block content %}内容区块{% endblock %}
+    </div>
+{% endblock %}
+   <!--2_footer_start-->
+	{% include '@HeccjjSkating/front/partial/footer.inc.html.twig' %}
+	<!--2_footer_end-->				
+    </body>
+</html>
+

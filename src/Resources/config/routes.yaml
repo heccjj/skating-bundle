@@ -1,0 +1,15 @@
+
+#user_admin:
+#    resource: "../../Controller/UserController.php"
+#    type:     annotation
+#    prefix:   /user
+
+security:
+    resource: "../../Controller/SecurityController.php"
+    type:     annotation
+#    prefix:   /user
+
+node_admin:
+    resource: '../../Controller/NodeController.php'
+    type:      annotation
+    prefix:   /node

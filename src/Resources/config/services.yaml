@@ -1,0 +1,80 @@
+parameters:
+    heccjj_skating_target_directory: 'some_directory'
+    meta_items:
+        is_important: '是否重要信息'
+        is_news_photo: '是否图片新闻'
+        is_news_first: '是否新闻头条'
+        is_top: '是否置顶'
+        template: '本节点模板'
+        nodetype_template: '目录下节点模板'
+
+    node_status:
+        drafted: '已创建'
+        #reviewed: '已审核'
+        #rejected: '已拒绝'
+        published: '已发布'
+
+    nodetypes:
+        NodeNews: "新闻"
+        NodeNotice: "公告"
+        NodeFolder: "目录"
+        NodeFile: "文件(含图片)"
+        NodePage: "页面"
+        NodeTemplate: "模板"
+        NodeArticle: "论文"
+        NodeFaculty: "教师信息"
+    
+    nodetypes_seacheable:
+        - NodeNews
+        - NodeNotice
+    
+    upload_directory: '%env(DOCUMENT_ROOT)%/uploadfiles/'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+#        bind:
+#            $targetDirectory: '%heccjj_skating_target_directory%'
+ 
+    Heccjj\SkatingBundle\:
+        resource: '../../*'
+        exclude: '../../{DependencyInjection,Entity,Migrations,Tests,HeccjjSkatingBundle.php}'
+
+    Heccjj\SkatingBundle\Controller\:
+        resource: '../../Controller'
+        tags: ['controller.service_arguments']
+
+    app.twig.extension.loader:
+        class: Twig\Extension\StringLoaderExtension
+        tags:
+            - { name: 'twig.extension' }
+
+    Heccjj\SkatingBundle\Form\MetaType:
+        arguments: ['%meta_items%']
+        tags: [form.type]
+
+    app.security.voter.edit_node:
+        class: Heccjj\SkatingBundle\Security\Voter\NodeVoter
+        tags:
+            - { name: security.voter }
+    
+    #search:
+    #    class:    Skating\CmsBundle\Lib\Search\SearchNull
+    #    #class:     Skating\CmsBundle\Lib\Search\SearchXS
+
+#    query:
+#        class: Heccjj\SkatingBundle\Common\Common;
+#    acl:
+#        class:    Skating\UserBundle\Libs\Acl
+#    search:
+#        #class:    Skating\CmsBundle\Libs\SearchNull
+#        class:     Skating\CmsBundle\Libs\SearchXS
+#    skating.cmsbundle.twig_database_loader:
+#        class:    Skating\CmsBundle\Libs\TwigDatabaseLoader
+#        arguments: [@doctrine.orm.entity_manager]
+#    skating.cmsbundle.twig_chain_loader:
+#        class:    Twig_Loader_Chain
+#        calls:
+#            - [ addLoader, [@twig.loader] ]
+#            - [ addLoader, [@skating.cmsbundle.twig_database_loader] ]

@@ -1,0 +1,153 @@
+{% extends '@HeccjjSkating/layout_admin.html.twig' %}
+
+{% block title %}Node List{% endblock %}
+
+{% block body %}
+<div class="card-heade">
+
+  {% block breadcrumb %}
+    {% include '@HeccjjSkating/admin/partial/breadcrumb.inc.html.twig' %}
+  {% endblock %}
+
+  {% include '@HeccjjSkating/admin/partial/create.inc.html.twig' %}
+
+  <div class="form-group form-check"  style="float: right;">
+    <input type="checkbox" class="form-check-input" id="input_include_deleted" {% if app.session.get('include_deleted') %}checked{% endif %}>
+    <label class="form-check-label" for="exampleCheck1">显示已删除内容&nbsp;&nbsp;</label>
+  </div>
+
+</div>
+<div class="card-body table-responsive-md">
+  <table id="nodelist" class="table table-bordered table-striped table-hover table-sm table-responsive-sm">
+      <thead>
+      <tr>
+          <td>UpdateTime</td>
+          <td>&nbsp;</td>
+          <td>Slug</td>
+          <td>Title</td>
+          <td>Status</td>
+          <td>Actions</td>
+      </tr>
+      </thead>
+      <tbody>
+    {% for node in nodes %}
+          {% if(node.dir == '/') %}
+            {% set path = node.dir ~ node.slug %}
+          {% else %}
+            {% set path = node.dir ~ '/' ~ node.slug %}
+          {% endif %}
+          <tr>
+              <td>{{node.updateAt.format('Y-m-d')}}</td>
+              <td>{% if node.getType|lower == 'nodefolder' %}<a href="{{ path('heccjjskating_list_node', {'dir' : path}) }}"><i class="far fa-folder nav-icon"></a>{% endif %}</td>
+              <td><a href="#" title="{{node.getType}}">{{node.slug}}</a></td>
+              <td><a href="{{ path('heccjjskating_detail_node', {'nid' : node.id}) }}" target="_blank">{{node.title}}</a></td>
+              <td><a href="#" onclick='setStatus("{{ path('heccjjskating_ajax_setnodestatus', {'nid' : node.id, 'nodetype': node.getTypeName()}) }}", this);'  type="button" class="btn btn-{% if node.status=='drafted' %}danger{% endif %} btn-sm">{{node.status}}</a></td>
+              <td>
+              {% if is_granted('edit', node) %}
+              <a href="{{ path('heccjjskating_edit_node', {'nid' : node.id}) }}" type="button" class="btn btn-primary btn-sm">编辑</a> &nbsp;
+              {% endif %}
+              {% if is_granted('delete', node) %}{% if node.getIsDeleted() %}&nbsp;已删除{% else %}
+              <a href="#" onclick="setdelurl('{{ path('heccjjskating_delete_node', {'nid' : node.id}) }}')" data-toggle="modal" data-target="#delconfirmModal"  type="button" class="btn btn-danger btn-sm">删除</a>{% endif %}&nbsp;&nbsp;
+              {% endif %}{% if node.hasVerions() %}<a href="{{ path('cms_admin_listversions', {'nid': node.id}) }}">旧版本</a>{% endif %}
+              </td>
+          </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<div class="modal fade" id="delconfirmModal" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">确认删除</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>确认的要删除该内容么？</p>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <input type="hidden" id="delurl" />
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-danger btn-ok" onclick="triggerdel()">确认删除</button>
+      </div>
+    </div><!-- /.modal-content -->    
+  </div><!-- /.modal-dialog -->  
+</div>
+
+<script>
+  $(document).ready(function(){
+
+    $('#nodelist').DataTable({
+      "ordering": false,
+      "pageLength": 20,
+      //"order": [[0, "desc"]],
+      //"autoWidth": false,
+      //"responsive": true,
+      "columnDefs": [ 
+        {
+            "targets": [ 0 ],
+            "visible": false,
+            "searchable": false
+        }],
+    });
+
+    //$('.toast').toast('show');
+
+    {% for message in app.flashes('success') %}
+      toastr.success('{{ message }}');
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+      toastr.error('{{ message }}');
+    {% endfor %}
+
+
+    $('#input_include_deleted').click(function(){
+       var include_deleted = $(this).prop("checked");
+       window.location.href = "{{ path('heccjjskating_set_include_delete')}}/" + include_deleted;
+    });
+
+  });
+
+  function setdelurl(url){
+    $("#delurl").val(url);
+  }
+
+  function triggerdel(){
+    window.location.href=$.trim($("#delurl").val());
+  }
+
+  function setStatus(url, a){
+      $.ajax({
+          url: url
+      }).done(function(msg) {
+          $(a).text(msg);
+          if(msg == 'published'){
+            $(a).removeClass('alert-primary');
+            $(a).addClass('alert-success');
+          }
+          if(msg == 'drafted'){
+            $(a).removeClass('alert-success');
+            $(a).addClass('alert-primary');
+          }
+            
+      }); 
+  }
+
+  function setIsDelete(url, a){
+    $.ajax({
+        url: url
+    }).done(function(msg) {
+        $(a).text(msg);
+        if(msg == false){
+          $(a).html('');
+        }
+    }); 
+  }
+
+</script>
+{% endblock %}

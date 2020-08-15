@@ -1,0 +1,15 @@
+
+{% block breadcrumb %}
+  {% set crumbs = query.breadcrumb( dir ) %}
+  <div id="breadcrumb"  style="float: left;">
+	<div id="breadcrumb_guide">您的位置({{ dir|raw}})：
+		  {% for crumb in crumbs %}
+		    {% if(crumb.path) %}
+			   <a href="{{ path('heccjjskating_list_node', {'dir': crumb.path}) }}"> {{crumb.title}} </a> /
+			 {% else %}
+			    {{crumb.title}}/
+			  {% endif %}
+		  {% endfor %}
+	</div>
+  </div>
+{% endblock %}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="stylesheet" href="{{ asset('bundles/heccjjskating/plugins/fontawesome-free/css/all.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/heccjjskating/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/heccjjskating/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/heccjjskating/plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/heccjjskating/plugins/daterangepicker/daterangepicker.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/heccjjskating/plugins/toastr/toastr.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/heccjjskating/adminlte/dist/css/adminlte.min.css') }}">
+        {% block stylesheets %}{% endblock %}
+    </head>
+    <body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+  <!-- Navbar -->
+  {% include '@HeccjjSkating/admin/partial/nav.inc.html.twig' %}
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  {% block asidebar %}
+  {% include '@HeccjjSkating/admin/partial/asidebar.inc.html.twig' %}
+  {% endblock %}
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card" style="padding:5px;">
+            {% block body %}{% endblock %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+        
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+{% include '@HeccjjSkating/admin/partial/footer.inc.html.twig' %}
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<script src="{{ asset('bundles/heccjjskating/plugins/jquery/jquery.min.js') }}"></script>
+<script src="{{ asset('bundles/heccjjskating/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('bundles/heccjjskating/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('bundles/heccjjskating/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('bundles/heccjjskating/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+<script src="{{ asset('bundles/heccjjskating/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('bundles/heccjjskating/plugins/bs-custom-file-input/bs-custom-file-input.min.js') }}"></script>
+<script src="{{ asset('bundles/heccjjskating/plugins/toastr/toastr.min.js') }}"></script>
+<script src="{{ asset('bundles/heccjjskating/plugins/select2/js/select2.full.min.js') }}"></script>
+
+
+<script src="{{ asset('bundles/heccjjskating/adminlte/dist/js/adminlte.js') }}"></script>
+{% block javascripts %}{% endblock %}
+  </body>
+</html>
